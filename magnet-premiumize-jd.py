@@ -31,7 +31,7 @@ link_remove_url = 'https://www.premiumize.me/api/transfer/delete'
 link_remove_params = {**{'type': 'torrent'}, **authentification_params}
 
 def main():
-    account_thread = threading.Thread(target=watch_folder_for_magnet_files)
+    account_thread = threading.Thread(target=watch_account_info)
     folder_thread = threading.Thread(target=watch_folder_for_magnet_files)
     premiumize_thread = threading.Thread(target=watch_premiumize_links)
 
@@ -87,8 +87,8 @@ def watch_folder_for_magnet_files():
                     print(add_result['message'])
                     continue
 
-                print("Successfully added {0} to Premiumize.me".format(file))
-                os.rename(os.path.join(os.environ.get('MAGNETFILE_DIR'), file), os.path.join(os.environ.get('MAGNETFILE_DIR'), str(add_result.get('id')) + '.dl'))
+                print("Successfully added {0} to Premiumize.me".format(add_result['name']))
+                os.rename(os.path.join(os.environ.get('MAGNETFILE_DIR'), file), os.path.join(os.environ.get('MAGNETFILE_DIR'), add_result['id'] + '.dl'))
 
         except Exception as e:
             print("Unknown error occurred while watching magnet folder")
@@ -128,12 +128,13 @@ def watch_premiumize_links():
                         print("{0} could not be added to myJD".format(link['name']))
 
                     remove_result = premiumize_remove_link(link['id'])
-                    os.remove(os.path.join(os.environ.get('MAGNETFILE_DIR'), link['id'] + '.dl'))
                     if remove_result['status'] == 'success':
                         print("{0} has been successfully removed from Premiumize.me".format(link['name']))
+                        os.remove(os.path.join(os.environ.get('MAGNETFILE_DIR'), link['id'] + '.dl'))
                     else:
                         print("{0} could not be removed from Premiumize.me".format(link['name']))
                         print(remove_result['message'])
+                        os.rename(os.path.join(os.environ.get('MAGNETFILE_DIR'), link['id'] + '.dl'), os.path.join(os.environ.get('MAGNETFILE_DIR'), link['id'] + '.noremove'))
 
         except Exception as e:
             print("Unknown error occurred while watching Premiumize.me links")
