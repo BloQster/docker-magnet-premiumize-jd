@@ -163,7 +163,7 @@ def premiumize_remove_link(link_id):
            "{'status': 'error', 'message': 'Link removal returned empty response'}")
 
 
-def premiumize_get_account_info()
+def premiumize_get_account_info():
     return json.loads(requests.get(account_info_url, params=account_info_params).text or 
            "{'status': 'error', 'message': 'Account info returned empty response'}")
 
