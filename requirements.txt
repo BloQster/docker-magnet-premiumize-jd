@@ -1,0 +1,2 @@
+requests==2.13
+myjdapi==1.0.2
